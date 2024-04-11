@@ -1,0 +1,26 @@
+project:
+  type: book
+
+book:
+  title: "A Bayesian Multilevel Model for the Psychometric Function using Julia and Turing.jl"
+  author: "Alexander D. Knudson"
+  date: "May 2024"
+  chapters:
+    - intro.qmd
+    - summary.qmd
+    - references.qmd
+
+bibliography: [references.bib, packages.bib]
+biblio-style: apalike
+link-citations: true
+
+engine: julia
+
+format:
+  html:
+    theme: cosmo
+    toc-depth: 3
+    toc-expand: true
+  pdf:
+    documentclass: book
+    toc: false
