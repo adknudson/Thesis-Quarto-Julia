@@ -6,9 +6,13 @@ book:
   author: "Alexander D. Knudson"
   date: "May 2024"
   chapters:
-    - intro.qmd
+    - index.qmd
+    - psychometrics.qmd
+    - methods.qmd
     - summary.qmd
     - references.qmd
+
+number-sections: true
 
 bibliography: [references.bib, packages.bib]
 biblio-style: apalike
