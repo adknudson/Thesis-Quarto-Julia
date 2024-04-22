@@ -7,8 +7,7 @@ book:
   date: "May 2024"
   chapters:
     - index.qmd
-    - psychometrics.qmd
-    - methods.qmd
+    - 020-psychometrics.qmd
     - summary.qmd
     - references.qmd
 
@@ -17,8 +16,6 @@ number-sections: true
 bibliography: [references.bib, packages.bib]
 biblio-style: apalike
 link-citations: true
-
-engine: julia
 
 format:
   html:
