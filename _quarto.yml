@@ -6,15 +6,14 @@ book:
   author: "Alexander D. Knudson"
   date: "May 2024"
   chapters:
-    - intro.qmd
+    - index.qmd
+    - 020-psychometrics.qmd
     - summary.qmd
     - references.qmd
 
 bibliography: [references.bib, packages.bib]
 biblio-style: apalike
 link-citations: true
-
-engine: julia
 
 format:
   html:

@@ -26,3 +26,8 @@ Manifest.toml
 # Quarto specific
 .quarto/
 _book/
+*.quarto_ipynb
+
+# Private data
+data/fang-data/
+/.quarto/
