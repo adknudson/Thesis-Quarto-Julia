@@ -2,7 +2,10 @@
 engine: julia
 ---
 
+
 ```{julia}
+#| output: false
+
 using Random
 using CairoMakie
 using Distributions
@@ -11,7 +14,8 @@ using TidierData
 fang = include("src/load-fang-data.jl")
 ```
 
-# Motivating data {#data}
+
+# Motivating data {#sec-data}
 
 
 This paper focuses on a type of psychometric experiment called a temporal order judgment (TOJ) experiment. If there are two distinct stimuli occurring nearly simultaneously then our brains will bind them into a single percept (perceive them as happening simultaneously). Compensation for small temporal differences is beneficial for coherent multisensory experiences, particularly in visual-speech synthesis as it is necessary to maintain an accurate representation of the sources of multisensory events.
@@ -20,40 +24,44 @@ This paper focuses on a type of psychometric experiment called a temporal order 
 It was Charles Darwin who in his book "On the Origin of Species" developed the idea that living organisms adapt in order to better survive in their environment. Sir Francis Galton, inspired by Darwin's ideas, became interested in the differences in human beings and in how to measure those differences. Galton's works on studying and measuring human differences lead to the creation of psychometrics -- the science of measuring mental faculties. Around the same time that he was developing his theories, Johann Friedrich Herbart was also interested in studying consciousness through the scientific method, and is responsible for creating mathematical models of the mind.
 
 
-E.H. Weber built upon Herbart's work, and sought out to prove the idea of a psychological threshold. A psychological threshold is a minimum stimulus intensity necessary to activate a sensory system -- a liminal stimulus. He paved the way for experimental psychology and is the namesake of Weber's Law (Equation \@ref(eq:webers-law)), which states that the change in a stimulus that will be just noticeable is a constant ratio of the original stimulus [@ekman1959weber].
+E.H. Weber built upon Herbart's work, and sought out to prove the idea of a psychological threshold. A psychological threshold is a minimum stimulus intensity necessary to activate a sensory system -- a liminal stimulus. He paved the way for experimental psychology and is the namesake of Weber's Law (@eq-webers-law), which states that the change in a stimulus that will be just noticeable is a constant ratio of the original stimulus [@ekman1959weber].
 
 
-\begin{equation}
-  \frac{\Delta I}{I} = k
-  (\#eq:webers-law)
-\end{equation}
+$$
+\frac{\Delta I}{I} = k
+$$ {#eq-webers-law}
 
 
 To demonstrate this law, consider holding a 1 kg weight ($I = 1$), and further suppose that the difference between a 1 kg weight and a 1.2 kg weight ($\Delta I = 0.2$) can just be detected. Then the constant just noticeable ratio is:
 
 
-$$k = \frac{0.2}{1} = 0.2$$
+$$
+k = \frac{0.2}{1} = 0.2
+$$
 
 
 Now consider picking up a 10 kg weight. The mass required to just detect a difference can be calculated as:
 
 
-$$\frac{\Delta I}{10} = 0.2 \Rightarrow \Delta I = 2$$
+$$
+\frac{\Delta I}{10} = 0.2 \Rightarrow \Delta I = 2
+$$
 
 
-The difference between a 10 kg and a 12 kg weight is expected to be just barely perceptible. Note that the difference in the first set of weights is 0.2, and in the second set it is 2. The perception of the difference in stimulus intensities is not absolute, but relative. G.T. Fechner devised the law (Weber-Fechner Law, Equation \@ref(eq:weber-fechner-law)) that the strength of a sensation grows as the logarithm of the stimulus intensity.
+The difference between a 10 kg and a 12 kg weight is expected to be just barely perceptible. Note that the difference in the first set of weights is 0.2, and in the second set it is 2. The perception of the difference in stimulus intensities is not absolute, but relative. G.T. Fechner devised the law (Weber-Fechner Law, @eq-weber-fechner-law) that the strength of a sensation grows as the logarithm of the stimulus intensity.
 
 
-\begin{equation}
-  S = K \ln I
-  (\#eq:weber-fechner-law)
-\end{equation}
+$$
+S = K \ln I
+$$ {#eq-weber-fechner-law}
 
 
-Consider two light sources: one that is 100 lumens ($S_1 = K \ln 100$) and another that is 200 lumens ($S_2 = K \ln 200$). The intensity of the second light is not perceived as twice as bright, but only about 1.15 times as bright according to \@ref(eq:weber-fechner-law):
+Consider two light sources: one that is 100 lumens ($S_1 = K \ln 100$) and another that is 200 lumens ($S_2 = K \ln 200$). The intensity of the second light is not perceived as twice as bright, but only about 1.15 times as bright according to @eq-weber-fechner-law:
 
 
-$$\theta = S_2 / S_1 \approx 1.15$$
+$$
+\theta = S_2 / S_1 \approx 1.15
+$$
 
 
 Notice that the value $K$ cancels out when calculating the relative intensity, but knowing $K$ can lead to important psychological insights about differences between persons or groups of people. What biological and contextual factors affect how people perceive different stimuli? How do we measure their perception in a meaningful way? We can collect data from psychometric experiments, fit a model to the data from a family of functions called psychometric functions, and inspect key operating characteristics of those functions.
@@ -68,7 +76,7 @@ Psychometric experiments are devised in a way to examine psychophysical processe
 ![A chart of the psychometric function. The experiment in this paper places two points on a subject's skin separated by some distance, and has them answer their impression of whether there is one point or two, recorded as either "two points" or "not two points". As the separation of aesthesiometer points increases, so too does the subject's confidence in their perception of "two-ness". So at what separation is the impression of two points liminal?](figures/chart_of_pf.png){#fig-chart-of-pf}
 
 
-Figure @fig-chart-of-pf displays the key aspects of the psychometric function. The most crucial part is the sigmoid function, the S-like non-decreasing curve which in this case is represented by the Normal CDF, $\Phi(\gamma)$. The horizontal axis represents the stimulus intensity: the separation of two points in centimeters. The vertical axis represents the probability that a subject has the impression of two points. With only experimental data, the response proportion becomes an approximation for the probability.
+@fig-chart-of-pf displays the key aspects of the psychometric function. The most crucial part is the sigmoid function, the S-like non-decreasing curve which in this case is represented by the Normal CDF, $\Phi(\gamma)$. The horizontal axis represents the stimulus intensity: the separation of two points in centimeters. The vertical axis represents the probability that a subject has the impression of two points. With only experimental data, the response proportion becomes an approximation for the probability.
 
 
 The temporal asynchrony between stimuli is called the stimulus onset asynchrony (SOA), and the range of SOAs for which sensory signals are integrated into a global percept is called the temporal binding window. When the SOA grows large enough, the brain segregates the two signals and the temporal order can be determined.
@@ -80,10 +88,11 @@ Our experiences in life as we age shape the mechanisms of processing multisensor
 A deficit in temporal sensitivity may lead to a widening of the temporal binding window and reduce the ability to segregate unrelated sensory signals. In TOJ tasks, the ability to discriminate the timing of multiple sensory signals is referred to as temporal sensitivity, and is studied through the measurement of the just noticeable difference (JND) -- the smallest lapse in time so that a temporal order can just be determined.
 
 
-Figure @fig-chart-of-pf highlights the features through which we study psychometric functions. The PSS is defined as the point where an observer can do no better at determining temporal order than random guessing (i.e.  when the response probability is 50%). The JND is defined as the extra temporal delay between stimuli so that the temporal order is just able to be determined. Historically this has been defined as the difference between the 84% level -- one standard deviation away from the mean -- and the PSS, though the upper level often depends on domain expertise.
+@fig-chart-of-pf highlights the features through which we study psychometric functions. The PSS is defined as the point where an observer can do no better at determining temporal order than random guessing (i.e.  when the response probability is 50%). The JND is defined as the extra temporal delay between stimuli so that the temporal order is just able to be determined. Historically this has been defined as the difference between the 84% level -- one standard deviation away from the mean -- and the PSS, though the upper level often depends on domain expertise.
 
 
 ```{julia}
+#| label: fig-plot-ref-pf
 #| fig-cap: "The PSS is defined as the point where an observer can do no better at determining temporal order than random guessing. The just noticeable difference is defined as the extra temporal delay between stimuli so that the temporal order is just able to be determined. Historically this has been defined as the difference between the 0.84 level and the PSS, though the upper level depends on domain expertise."
 
 # set up the figure
@@ -128,7 +137,6 @@ let pl = 0.5, pu = 0.84, n = 101
     tooltip!(ax, (ql + qu) / 2, 0.16, "JND")
 end
 
-# show the figure
 fig
 ```
 
@@ -202,10 +210,11 @@ After the first block of each task was completed, the participants went through 
 ## Data visualization and quirks
 
 
-The dependent variable in these TOJ experiments is the subject's perceived response, encoded as a 0 or a 1, and the independent variable is the SOA value. If the response is plotted against the SOA values, then it is difficult to determine the relationship (see the right panel of figure \@ref(fig:ch020-simple-response-soa-plot)). Transparency can be used to better visualize the relationship. The center panel in figure \@ref(fig:ch020-simple-response-soa-plot) shows the same data as the left, except that the transparency is set to $0.05$. Note that there is a higher density of "0" responses towards more negative SOAs, and a higher density of "1" responses for more positive SOAs. The proportion of "positive" responses for a given SOA is computed and plotted against the SOA value (displayed in the right panel of figure \@ref(fig:ch020-simple-response-soa-plot)). The relationship between SOA values and responses is clear -- as the SOA value goes from more negative to more positive, the proportion of positive responses increases from near 0 to near 1.
+The dependent variable in these TOJ experiments is the subject's perceived response, encoded as a 0 or a 1, and the independent variable is the SOA value. If the response is plotted against the SOA values, then it is difficult to determine the relationship (see the right panel of @fig-simple-response-soa-plot). Transparency can be used to better visualize the relationship. The center panel in @fig-simple-response-soa-plot shows the same data as the left, except that the transparency is set to $0.05$. Note that there is a higher density of "0" responses towards more negative SOAs, and a higher density of "1" responses for more positive SOAs. The proportion of "positive" responses for a given SOA is computed and plotted against the SOA value (displayed in the right panel of @fig-simple-response-soa-plot). The relationship between SOA values and responses is clear -- as the SOA value goes from more negative to more positive, the proportion of positive responses increases from near 0 to near 1.
 
 
 ```{julia}
+#| label: fig-simple-response-soa-plot
 #| fig-cap: "Left: Simple plot of response vs. soa value. Center: A plot of response vs. soa with transparency. Right: A plot of proportions vs. soa with transparency."
 
 fig = Figure()
@@ -264,14 +273,18 @@ fig
 ```
 
 
-The right panel in figure \@ref(fig:ch020-simple-response-soa-plot) is the easiest to interpret, and we often present the observed and predicted data using the proportion of responses rather than the raw responses. Proportional data is also bounded on the same interval as the response in contrast to the raw counts.
+The right panel in @fig-simple-response-soa-plot is the easiest to interpret, and we often present the observed and predicted data using the proportion of responses rather than the raw responses. Proportional data is also bounded on the same interval as the response in contrast to the raw counts.
 
 
-For the audiovisual task, the responses can be aggregated into binomial data -- the number of positive responses for given SOA value -- which is more efficient to work with than the Bernoulli data (see table \@ref(tab:ch020-av-bin-sample)). However the number of times an SOA is presented varies between the pre-adaptation and post-adaptation blocks; 5 and 3 times per SOA respectively.
+For the audiovisual task, the responses can be aggregated into binomial data -- the number of positive responses for given SOA value -- which is more efficient to work with than the Bernoulli data (see @tbl-av-bin-sample). However the number of times an SOA is presented varies between the pre-adaptation and post-adaptation blocks; 5 and 3 times per SOA respectively.
 
 
 ```{julia}
+#| label: tbl-av-bin-sample
+#| tbl-cap: Audiovisual task with aggregated responses.
+
 Random.seed!(8675309)
+
 @chain fang[:audiovisual_binomial] begin
     @select(block, soa, n, k)
     @filter(block ∈ ("baseline", "adapt1"))
@@ -279,20 +292,28 @@ Random.seed!(8675309)
     @slice_sample(n=3)
     @mutate(proportion = k / n)
     @arrange(block)
+    @ungroup()
 end
 ```
 
 
-There is one younger subject that did not complete the audiovisual task, and one younger subject that did not complete the duration task. There is also one older subject who's response data for the post-adaptation audiovisual task is unreasonable -- it is extremely unlikely that the data represents genuine responses (see figure \@ref(fig:ch020-av-post1-O-f-CE-plot)).
+There is one younger subject that did not complete the audiovisual task, and one younger subject that did not complete the duration task. There is also one older subject who's response data for the post-adaptation audiovisual task is unreasonable -- it is extremely unlikely that the data represents genuine responses (see @fig-av-post1-o-f-ce-plot).
 
 
 ```{julia}
-#| fig-cap: "Post-adaptation response data for O-f-CE"
+#| output: false
+#| echo: false
 
 df = @chain fang[:audiovisual_binomial] begin
     @filter(rid == "av-adapt1-O-f-CE")
     @mutate(p = k / n)
 end
+```
+
+
+```{julia}
+#| label: fig-av-post1-o-f-ce-plot
+#| fig-cap: "Post-adaptation response data for O-f-CE"
 
 fig = Figure()
 
@@ -328,7 +349,7 @@ fig
 ```
 
 
-Of all the negative SOAs, there were only two "correct" responses (the perceived order matches the actual order). If a subject is randomly guessing the temporal order, then a naive estimate for the proportion of correct responses is 0.5. If a subject's proportion of correct responses is above 0.5, then they are doing better than random guessing. Figure \@ref(fig:ch020-av-post-neg-trials) shows that subject `O-f-CE` is the only one who's proportion is below 0.5 (and by a considerable amount), and so their post-adaptation block is removed from data set for model fitting.
+Of all the negative SOAs, there were only two "correct" responses (the perceived order matches the actual order). If a subject is randomly guessing the temporal order, then a naive estimate for the proportion of correct responses is 0.5. If a subject's proportion of correct responses is above 0.5, then they are doing better than random guessing. @fig-av-post-neg-trials shows that subject `O-f-CE` is the only one who's proportion is below 0.5 (and by a considerable amount), and so their post-adaptation block is removed from data set for model fitting.
 
 
 ```{julia}
@@ -344,11 +365,12 @@ df = @chain fang[:audiovisual] begin
     @summarize(k = sum(correct_response), n = n())
     @mutate(p = k / n)
     @mutate(below_half = p < 0.5)
-end
+end;
 ```
 
 
 ```{julia}
+#| label: fig-av-post-neg-trials
 #| fig-cap: "Proportion of correct responses for negative SOA values during the post-adaptation audiovisual experiment."
 
 fig = Figure(; size = (600, 800))
